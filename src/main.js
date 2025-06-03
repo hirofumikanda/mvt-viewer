@@ -7,6 +7,20 @@ document.getElementById("file-input").addEventListener("change", async (event) =
   const file = event.target.files[0];
   if (!file) return;
 
+  // ファイル名から z, x, y を抽出（例: 14-14591-6480.mvt または 14/14591/6480.pbf）
+  const tileMatch = file.name.match(/(\d+)[-\/](\d+)[-\/](\d+)/);
+  if (!tileMatch) {
+    document.getElementById("output").textContent =
+      "ファイル名に z-x-y または z/x/y を含めてください（例: 14-14591-6480.mvt）";
+    document.getElementById("download-btn").disabled = true;
+    return;
+  }
+
+  const [, zStr, xStr, yStr] = tileMatch;
+  const z = parseInt(zStr, 10);
+  const x = parseInt(xStr, 10);
+  const y = parseInt(yStr, 10);
+
   const arrayBuffer = await file.arrayBuffer();
   let tile;
 
@@ -25,7 +39,7 @@ document.getElementById("file-input").addEventListener("change", async (event) =
     const features = [];
 
     for (let i = 0; i < layer.length; i++) {
-      const feature = layer.feature(i).toGeoJSON(0, 0, 0);
+      const feature = layer.feature(i).toGeoJSON(x, y, z);
       features.push(feature);
     }
 

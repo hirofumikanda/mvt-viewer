@@ -7,8 +7,18 @@
   </head>
   <body>
     <h1>MVT ファイルビューア</h1>
+
+    <p>
+      <strong>※注：</strong> アップロードするファイル名は
+      <code>z-x-y.mvt</code> または <code>z-x-y.pbf</code> の形式にしてください。<br />
+      例: <code>14-14591-6480.mvt</code> や <code>12-3456-2345.pbf</code><br />
+      ファイル名から <strong>ズームレベル・X・Y タイル座標</strong> を取得して、
+      正しい緯度経度に変換します。
+    </p>
+
     <input type="file" id="file-input" accept=".mvt,.pbf" />
     <button id="download-btn" disabled>GeoJSONをダウンロード</button>
+
     <pre id="output"></pre>
 
     <script type="module" src="/src/main.js"></script>
