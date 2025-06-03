@@ -2,12 +2,15 @@ import { VectorTile } from "@mapbox/vector-tile";
 import Pbf from "pbf";
 
 let lastGeoJSON = null;
+let lastFileName = null;
 
 document.getElementById("file-input").addEventListener("change", async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  // ファイル名から z, x, y を抽出（例: 14-14591-6480.mvt または 14/14591/6480.pbf）
+  lastFileName = file.name.replace(/\.(mvt|pbf)$/i, ".geojson"); // 拡張子を置換
+
+  // ファイル名から z, x, y を抽出（例: 14-14591-6480.mvt）
   const tileMatch = file.name.match(/(\d+)[-\/](\d+)[-\/](\d+)/);
   if (!tileMatch) {
     document.getElementById("output").textContent =
@@ -59,7 +62,7 @@ document.getElementById("download-btn").addEventListener("click", () => {
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = "tile.geojson";
+  a.download = lastFileName || ".geojson";
   a.click();
 
   URL.revokeObjectURL(url);
