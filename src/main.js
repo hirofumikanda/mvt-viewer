@@ -7,7 +7,6 @@ document.getElementById("file-input").addEventListener("change", async (event) =
 
   const fileName = file.name.replace(/\.(mvt|pbf)$/i, ".geojson");
 
-  // ファイル名から z, x, y を抽出
   const tileMatch = file.name.match(/(\d+)[-\/](\d+)[-\/](\d+)/);
   if (!tileMatch) {
     document.getElementById("output").textContent =
@@ -30,28 +29,28 @@ document.getElementById("file-input").addEventListener("change", async (event) =
     return;
   }
 
-  const result = {};
+  // 全レイヤーのフィーチャを統合
+  const features = [];
 
   for (const layerName in tile.layers) {
     const layer = tile.layers[layerName];
-    const features = [];
 
     for (let i = 0; i < layer.length; i++) {
       const feature = layer.feature(i).toGeoJSON(x, y, z);
       features.push(feature);
     }
-
-    result[layerName] = features;
   }
 
-  // 表示用
-  document.getElementById("output").textContent = JSON.stringify(result, null, 2);
+  const geojson = {
+    type: "FeatureCollection",
+    features: features
+  };
 
-  // チェックボックスで自動ダウンロード制御
+  document.getElementById("output").textContent = JSON.stringify(geojson, null, 2);
+
   const shouldDownload = document.getElementById("auto-download").checked;
-
   if (shouldDownload) {
-    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
