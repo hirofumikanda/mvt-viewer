@@ -3,23 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <title>MVT Viewer</title>
-    <script type="module" crossorigin src="/mvt-viewer/assets/index-B5W90mAF.js"></script>
+    <script type="module" crossorigin src="/mvt-viewer/assets/index-C9s4KJTE.js"></script>
     <link rel="stylesheet" crossorigin href="/mvt-viewer/assets/index-CoNK1WbU.css">
   </head>
   <body>
     <h1>MVT ファイルビューア</h1>
 
     <p>
-      <strong>※注：</strong> アップロードするファイル名は
-      <code>z-x-y.mvt</code> または <code>z-x-y.pbf</code> の形式にしてください。<br />
-      例: <code>14-14591-6480.mvt</code> や <code>12-3456-2345.pbf</code><br />
-      ファイル名から <strong>ズームレベル・X・Y タイル座標</strong> を取得して、
-      正しい緯度経度に変換します。
+      <strong>※注：</strong> ファイル名は <code>z-x-y.mvt</code> や <code>z-x-y.pbf</code> の形式にしてください。<br />
+      例: <code>14-14591-6480.mvt</code><br />
+      <label><input type="checkbox" id="auto-download" checked /> アップロード後に自動でGeoJSONをダウンロードする</label>
     </p>
 
     <input type="file" id="file-input" accept=".mvt,.pbf" />
-    <button id="download-btn" disabled>GeoJSONをダウンロード</button>
-
     <pre id="output"></pre>
 
   </body>
