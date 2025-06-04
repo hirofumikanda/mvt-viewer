@@ -1,21 +1,17 @@
 import { VectorTile } from "@mapbox/vector-tile";
 import Pbf from "pbf";
 
-let lastGeoJSON = null;
-let lastFileName = null;
-
 document.getElementById("file-input").addEventListener("change", async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  lastFileName = file.name.replace(/\.(mvt|pbf)$/i, ".geojson"); // 拡張子を置換
+  const fileName = file.name.replace(/\.(mvt|pbf)$/i, ".geojson");
 
-  // ファイル名から z, x, y を抽出（例: 14-14591-6480.mvt）
+  // ファイル名から z, x, y を抽出
   const tileMatch = file.name.match(/(\d+)[-\/](\d+)[-\/](\d+)/);
   if (!tileMatch) {
     document.getElementById("output").textContent =
-      "ファイル名に z-x-y または z/x/y を含めてください（例: 14-14591-6480.mvt）";
-    document.getElementById("download-btn").disabled = true;
+      "⚠️ ファイル名に z-x-y または z/x/y を含めてください（例: 14-14591-6480.mvt）";
     return;
   }
 
@@ -31,7 +27,6 @@ document.getElementById("file-input").addEventListener("change", async (event) =
     tile = new VectorTile(new Pbf(arrayBuffer));
   } catch (err) {
     document.getElementById("output").textContent = "⚠️ このファイルはMVT/PBF形式ではありません。";
-    document.getElementById("download-btn").disabled = true;
     return;
   }
 
@@ -49,21 +44,21 @@ document.getElementById("file-input").addEventListener("change", async (event) =
     result[layerName] = features;
   }
 
-  lastGeoJSON = result;
+  // 表示用
   document.getElementById("output").textContent = JSON.stringify(result, null, 2);
-  document.getElementById("download-btn").disabled = false;
-});
 
-document.getElementById("download-btn").addEventListener("click", () => {
-  if (!lastGeoJSON) return;
+  // チェックボックスで自動ダウンロード制御
+  const shouldDownload = document.getElementById("auto-download").checked;
 
-  const blob = new Blob([JSON.stringify(lastGeoJSON, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+  if (shouldDownload) {
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = lastFileName || ".geojson";
-  a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
 
-  URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
+  }
 });
